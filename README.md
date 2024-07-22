@@ -1,2 +1,5 @@
 # feed-processor
-App to learn different go concepts. Architecture in description.
+Commandline app to learn different go concepts.
+
+Architecture:
+![img.png](architecture.png)
