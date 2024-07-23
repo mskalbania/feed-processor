@@ -1,6 +1,8 @@
 package main
 
 import (
+	_ "feed-processor/matchers"
+	"feed-processor/search"
 	"log"
 	"os"
 )
@@ -12,4 +14,5 @@ func init() {
 
 func main() {
 	log.Println("Starting application...")
+	search.Run("weather")
 }
