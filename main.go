@@ -14,5 +14,5 @@ func init() {
 
 func main() {
 	log.Println("Starting application...")
-	search.Run("weather")
+	search.Run("Kamala")
 }
