@@ -64,16 +64,12 @@ func (m rssMatcher) Match(feed *search.FeedMetadata, searchTerm string) ([]*sear
 		return nil, err
 	}
 	for _, channelItem := range document.Channel.Item {
-		matchedInTitle, err := regexp.MatchString(searchTerm, channelItem.Title)
-		matchedInDescription, err := regexp.MatchString(searchTerm, channelItem.Description)
+		matched, err := match(searchTerm, channelItem)
 		if err != nil {
 			return nil, err
 		}
-		if matchedInTitle || matchedInDescription {
-			results = append(results, &search.Result{
-				Title:       channelItem.Title,
-				Description: channelItem.Description,
-			})
+		if matched {
+			results = append(results, toResult(channelItem))
 		}
 	}
 	return results, nil
@@ -92,6 +88,19 @@ func fetchRssDocument(feed *search.FeedMetadata) (*rssDocument, error) {
 		return nil, errors.New(fmt.Sprintf("Error while calling %s, code: %d", feed.URI, rs.StatusCode))
 	}
 	var document rssDocument
-	xml.NewDecoder(rs.Body).Decode(&document)
+	err = xml.NewDecoder(rs.Body).Decode(&document)
 	return &document, err
+}
+
+func match(searchTerm string, channelItem item) (bool, error) {
+	matchedInTitle, err := regexp.MatchString(searchTerm, channelItem.Title)
+	matchedInDescription, err := regexp.MatchString(searchTerm, channelItem.Description)
+	return matchedInTitle || matchedInDescription, err
+}
+
+func toResult(channelItem item) *search.Result {
+	return &search.Result{
+		Title:       channelItem.Title,
+		Description: channelItem.Description,
+	}
 }
